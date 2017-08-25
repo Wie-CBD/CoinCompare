@@ -1,0 +1,216 @@
+<html>   
+    
+    
+    <head>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+ 
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    
+    <?php
+            //ask for the JSON files
+            ini_set("allow_url_fopen", 1);  
+            //ask for the latest data from whattomine
+            $alt_json = file_get_contents('http://whattomine.com/coins.json'); 
+            $alt_coins = json_decode($alt_json,true);   
+            //ask for the latest btc price from bittrex
+            $btc_json = file_get_contents('https://api.independentreserve.com/Public/GetMarketSummary?primaryCurrencyCode=xbt&secondaryCurrencyCode=usd');
+            $btc = json_decode($btc_json,true); 
+           
+            
+            //get the overall market summary
+            $bittrex_market_summary = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getmarketsummaries'),true); 
+            //get the currencies
+            $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true); 
+            
+                
+            //alright! now let's parse the market summary and ONLY get the BTC market.
+            $bittrex_btc_market = array();
+             foreach($bittrex_market_summary["result"] as $results){
+                        
+                        if(preg_match('/BTC-/',$results["MarketName"])){
+                            $bittrex_btc_market[] = $results;
+                        }
+                
+                
+            }
+        
+            
+            $btc_price = $bittrex_market_summary["result"][252]["Last"];
+             
+        
+        
+    ?>  
+    
+    </head>
+    
+    
+    
+    <body>
+        <div class="jumbotron text-center">
+             <h1>Coins!</h1>
+            <h3>A simple Crypto Currency Value Checker page</h3>
+            <p>Data taken from Bittrex.</p>
+        </div>
+        
+       
+        <div class="container">    
+
+            
+            <div class ="row ">
+            </div> 
+            <div class="row">
+            <div class="col-md-3">
+                
+                    <div class="panel panel-default">
+                    <div class="panel-heading">Coins</div>
+                    <div class="panel-body">
+                        <input type="checkbox" value="Ethereum" name="altcoins[]" /> <label>Ethereum</label><br>
+                        <input type="checkbox" value="EthereumClassic" name="altcoins[]" /> <label>Ethereum Classic</label><br>
+                        <input type="checkbox" value="Ubiq" name="altcoins[]" /> <label>Ubiq</label><br>
+                        <input type="checkbox" value="MusicCoin" name="altcoins[]" /> <label>MusicCoin</label><br>
+                        <input type="checkbox" value="Zcash" name="altcoins[]" /> <label>ZCash</label><br>
+                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>ZenCash</label><br>
+                        <input type="checkbox" value="Ubiq" name="altcoins[]" /> <label>Ubiq</label><br>
+                        <input type="checkbox" value="MusicCoin" name="altcoins[]" /> <label>Sia</label><br>
+                        <input type="checkbox" value="Zcash" name="altcoins[]" /> <label>Burst</label><br>
+                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>Expanse</label><br>
+                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>Monero</label><br>  
+                        <a href="#" class="btn btn-primary" role="button">Filter</a>
+                    </div>
+                  
+                    </div>
+                
+                
+            </div>
+            <div class="col-md-9">  
+            <?php 
+                $currencies = $bittrex_currencies["result"];
+                $market = $bittrex_btc_market;
+                
+                function sortByOrder($a, $b) {
+                    return $a['Volume'] - $b['Volume'];
+                }
+          
+                rowCreator($market,$currencies, $btc_price);
+                
+            ?> 
+                </div>
+            </div>
+        </div>
+    </body>
+    
+<?php  
+    
+
+function rowCreator($coins, $names, $price){
+    $numberOfRows = ceil(sizeof($coins)/3);
+    $lastIndex = 0;
+    for($i=0;$i<=$numberOfRows;$i++){
+                echo '</br><div class="row">';
+                for($j=$lastIndex;$j<3*$i;$j++){
+                    if($j < sizeof($coins)){
+                    panelCreator($coins[$j], $names, $price);
+                    $lastIndex = $j+1;
+                    }
+                }
+                echo "</div>";
+    }
+    
+}
+    
+function panelCreator($coin, $names, $price){
+      
+    
+    $coinTag = str_replace("BTC-","",$coin["MarketName"]);
+    $coinName = getCurrencyLong($coinTag, $names);
+    $coinPrice = $coin["Last"];
+      echo
+                '
+                <div class = "col-sm-6 col-md-4">
+                <div class ="panel-body text-center">
+                <img align = "center" src="img/logos/'.$coinTag.'.png" width="100px" height="100px"><div>'
+                .'</br><h2>'.
+                $coinName
+                .'</h2>'.$coinTag.'</br>'
+                .number_format($coinPrice*$price,2,'.',' ').
+                " USD</br>".$coinPrice.
+                " BTC </br>".
+                $coin["Volume"].'
+                </div>
+                </div>
+                </div>
+                '; 
+}
+    
+    
+function rowFactory($chosenArray,$alt_coins,$btc_price){
+    $numberOfRows = ceil(sizeof($chosenArray)/3);
+    $lastIndex = 0;
+    for($i=0;$i<=$numberOfRows;$i++){
+                echo '</br><div class="row">';
+                for($j=$lastIndex;$j<3*$i;$j++){
+                    if($j < sizeof($chosenArray)){
+                    panelFactory($chosenArray[$j],$alt_coins,$btc_price);
+                    $lastIndex = $j+1;
+                    }
+                }
+                echo "</div>";
+    }
+}
+function panelFactory($tag,$array,$price){
+                echo
+                '
+                <div class = "col-sm-6 col-md-4">
+                <div class ="panel-body text-center">
+                <img align = "center" src="img/logos/'.$tag.'.png" width="100px" height="100px"><div>'
+                .'</br><h2>'.
+                $tag
+                .'</h2>'.$array['coins'][$tag]['tag']  .'</br>'
+                .number_format($array['coins'][$tag]['exchange_rate']*$price,2,'.',' ').
+                " USD</br>".$array['coins'][$tag]['exchange_rate'].
+                " BTC".
+                '</div>
+                </div>
+                </div>
+                '; 
+    
+    
+}    
+function panelFactoryBittrex($int,$array,$price){
+                echo
+                '
+                <div class = "col-sm-6 col-md-4">
+                <div class ="panel-body text-center">
+                <img align = "center" src="img/logos/'.$tag.'.png" width="100px" height="100px"><div>'
+                .'</br><h2>'.
+                $tag
+                .'</h2>'.$array["result"][$int]['tag']  .'</br>'
+                .number_format($array['coins'][$tag]['exchange_rate']*$price,2,'.',' ').
+                " USD</br>".$array['coins'][$tag]['exchange_rate'].
+                " BTC".
+                '</div>
+                </div>
+                </div>
+                '; 
+    
+}    
+  
+
+function getCurrencyLong($tag,$array){
+                foreach($array as $key => $val){
+                    if($val["Currency"] == $tag){
+                        return $val["CurrencyLong"];
+                    }
+                }
+}
+
+
+    
+?>
+
+
+
+</html>
