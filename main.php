@@ -21,15 +21,11 @@
             $alt_coins = json_decode($alt_json,true);   
             //ask for the latest btc price from bittrex
             $btc_json = file_get_contents('https://api.independentreserve.com/Public/GetMarketSummary?primaryCurrencyCode=xbt&secondaryCurrencyCode=usd');
-            $btc = json_decode($btc_json,true); 
-           
-            
+            $btc = json_decode($btc_json,true);  
             //get the overall market summary
             $bittrex_market_summary = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getmarketsummaries'),true); 
             //get the currencies
-            $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true); 
-            
-                
+            $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true);  
             //alright! now let's parse the market summary and ONLY get the BTC market.
             $bittrex_btc_market = array();
              foreach($bittrex_market_summary["result"] as $results){
@@ -37,15 +33,8 @@
                         if(preg_match('/BTC-/',$results["MarketName"])){
                             $bittrex_btc_market[] = $results;
                         }
-                
-                
-            }
-        
-            
-            $btc_price = $bittrex_market_summary["result"][252]["Last"];
-             
-        
-        
+            } 
+            $btc_price = $bittrex_market_summary["result"][252]["Last"]; 
     ?>  
     
     </head>
@@ -78,7 +67,15 @@
                         <select name="sortType">
                             <option value="lastPrice" <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="lastPrice")){ echo "selected"; }  ?>>Last Price</option>
                             <option value="name"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="name")){ echo "selected"; }  ?>>Coin Name</option> 
-                            <option value="volume"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="volume")){echo "selected";} ?>>Volume</option> 
+                            <option value="volume" 
+                                    
+                                    <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="volume"))
+                                          { echo "selected";  }
+                                    else if(!isset($_POST['sortType'])){ echo 'selected'; }
+                                            
+                                    
+                                    
+                                    ?>>Volume</option> 
                              </select> 
                         <input type="submit" name="submit" class="btn btn-primary" role="button">
                         </form>
@@ -126,10 +123,7 @@
             </div>
         </div>
     </body>
-    <script> 
-    $(document).ready(function(){
-        $(#)
-    });
+    <script>  
     </script>
     
 <?php  
@@ -158,7 +152,7 @@ function panelCreator($coin, $names, $price){
     $coinName = getCurrencyLong($coinTag, $names);
     $coinPrice = $coin["Last"];
     
-    if($coinTag != "ADX"){
+    if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
     echo
                 '
                 <div class = "col-sm-6 col-md-4">
@@ -166,9 +160,9 @@ function panelCreator($coin, $names, $price){
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
-                .'</h2>'.$coinTag.'</br>'
+                .'<h3>'
                 .number_format($coinPrice*$price,2,'.',' ').
-                " USD</br>".$coinPrice.
+                " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
                 </div>
@@ -180,12 +174,12 @@ function panelCreator($coin, $names, $price){
         echo  '
                 <div class = "col-sm-6 col-md-4">
                 <div class ="panel-body text-center">
-                <img align = "center" src="img/logos/buggy ass bastard.png" width="100px" height="100px"><div>'
+                <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
-                .'</h2>'.$coinTag.'</br>'
+                .'<h3>'
                 .number_format($coinPrice*$price,2,'.',' ').
-                " USD</br>".$coinPrice.
+                " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
                 </div>
@@ -193,60 +187,7 @@ function panelCreator($coin, $names, $price){
                 </div>
                 '; 
     }
-}
-/* 
-function rowFactory($chosenArray,$alt_coins,$btc_price){
-    $numberOfRows = ceil(sizeof($chosenArray)/3);
-    $lastIndex = 0;
-    for($i=0;$i<=$numberOfRows;$i++){
-                echo '</br><div class="row">';
-                for($j=$lastIndex;$j<3*$i;$j++){
-                    if($j < sizeof($chosenArray)){
-                    panelFactory($chosenArray[$j],$alt_coins,$btc_price);
-                    $lastIndex = $j+1;
-                    }
-                }
-                echo "</div>";
-    }
-}
-function panelFactory($tag,$array,$price){
-                echo
-                '
-                <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center">
-                <img align = "center" src="img/logos/'.$tag.'.png" width="100px" height="100px"><div>'
-                .'</br><h2>'.
-                $tag
-                .'</h2>'.$array['coins'][$tag]['tag']  .'</br>'
-                .number_format($array['coins'][$tag]['exchange_rate']*$price,2,'.',' ').
-                " USD</br>".$array['coins'][$tag]['exchange_rate'].
-                " BTC".
-                '</div>
-                </div>
-                </div>
-                '; 
-    
-    
-}    
-function panelFactoryBittrex($int,$array,$price){
-                echo
-                '
-                <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center">
-                <img align = "center" src="img/logos/'.$tag.'.png" width="100px" height="100px"><div>'
-                .'</br><h2>'.
-                $tag
-                .'</h2>'.$array["result"][$int]['tag']  .'</br>'
-                .number_format($array['coins'][$tag]['exchange_rate']*$price,2,'.',' ').
-                " USD</br>".$array['coins'][$tag]['exchange_rate'].
-                " BTC".
-                '</div>
-                </div>
-                </div>
-                '; 
-    
-}    
-*/
+} 
 
 function getCurrencyLong($tag,$array){
                 foreach($array as $key => $val){
