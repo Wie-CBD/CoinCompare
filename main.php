@@ -8,7 +8,11 @@
  
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    
+
+    <script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
     <?php
             //ask for the JSON files
             ini_set("allow_url_fopen", 1);  
@@ -53,6 +57,7 @@
              <h1>Coins!</h1>
             <h3>A simple Crypto Currency Value Checker page</h3>
             <p>Data taken from Bittrex.</p>
+            <p>BTC = <?php echo $btc_price; ?> USD</p>
         </div>
         
        
@@ -63,23 +68,21 @@
             </div> 
             <div class="row">
             <div class="col-md-3">
-                
+                    
                     <div class="panel panel-default">
+                   
                     <div class="panel-heading">Coins</div>
                     <div class="panel-body">
-                        <input type="checkbox" value="Ethereum" name="altcoins[]" /> <label>Ethereum</label><br>
-                        <input type="checkbox" value="EthereumClassic" name="altcoins[]" /> <label>Ethereum Classic</label><br>
-                        <input type="checkbox" value="Ubiq" name="altcoins[]" /> <label>Ubiq</label><br>
-                        <input type="checkbox" value="MusicCoin" name="altcoins[]" /> <label>MusicCoin</label><br>
-                        <input type="checkbox" value="Zcash" name="altcoins[]" /> <label>ZCash</label><br>
-                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>ZenCash</label><br>
-                        <input type="checkbox" value="Ubiq" name="altcoins[]" /> <label>Ubiq</label><br>
-                        <input type="checkbox" value="MusicCoin" name="altcoins[]" /> <label>Sia</label><br>
-                        <input type="checkbox" value="Zcash" name="altcoins[]" /> <label>Burst</label><br>
-                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>Expanse</label><br>
-                        <input type="checkbox" value="ZenCash" name="altcoins[]" /> <label>Monero</label><br>  
-                        <a href="#" class="btn btn-primary" role="button">Filter</a>
-                    </div>
+                         <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>">
+                        <label>Sort By</label>
+                        <select name="sortType">
+                            <option value="lastPrice" <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="lastPrice")){ echo "selected"; }  ?>>Last Price</option>
+                            <option value="name"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="name")){ echo "selected"; }  ?>>Coin Name</option> 
+                            <option value="volume"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="volume")){echo "selected";} ?>>Volume</option> 
+                             </select> 
+                        <input type="submit" name="submit" class="btn btn-primary" role="button">
+                        </form>
+                        </div>
                   
                     </div>
                 
@@ -90,10 +93,32 @@
                 $currencies = $bittrex_currencies["result"];
                 $market = $bittrex_btc_market;
                 
-                function sortByOrder($a, $b) {
-                    return $a['Volume'] - $b['Volume'];
+                
+                function sortByPrice($a, $b) {
+                    return ($b["Last"]<$a["Last"])?-1:1;
                 }
-          
+                function sortByName($a, $b) {
+                    return ($a<$b)?-1:1;
+                }
+                function sortByVolume($a, $b){
+                    return ($b["BaseVolume"]<$a["BaseVolume"])?-1:1;
+                }
+                
+                //sort it by price by default
+                usort($market, 'sortByVolume'); 
+                if(isset($_POST['sortType'])){ 
+                    if($_POST['sortType'] == 'name'){
+                        usort($market, 'sortByName');
+                    }
+                    if($_POST['sortType'] == 'lastPrice'){
+                        usort($market, 'sortByPrice');
+                    }
+                    if($_POST['sortType'] == 'volume'){
+                        usort($market, 'sortByVolume');
+                    }
+                }
+                
+                           
                 rowCreator($market,$currencies, $btc_price);
                 
             ?> 
@@ -101,6 +126,11 @@
             </div>
         </div>
     </body>
+    <script> 
+    $(document).ready(function(){
+        $(#)
+    });
+    </script>
     
 <?php  
     
@@ -127,25 +157,44 @@ function panelCreator($coin, $names, $price){
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
     $coinPrice = $coin["Last"];
-      echo
+    
+    if($coinTag != "ADX"){
+    echo
                 '
                 <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center">
-                <img align = "center" src="img/logos/'.$coinTag.'.png" width="100px" height="100px"><div>'
+                <div class ="panel-body text-center" id="'.$coinTag.'">
+                <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
                 .'</h2>'.$coinTag.'</br>'
                 .number_format($coinPrice*$price,2,'.',' ').
                 " USD</br>".$coinPrice.
-                " BTC </br>".
-                $coin["Volume"].'
+                " BTC </br> Volume : ".
+                number_format($coin["Volume"],2,'.',' ').'
                 </div>
                 </div>
                 </div>
                 '; 
+        }
+    else{ 
+        echo  '
+                <div class = "col-sm-6 col-md-4">
+                <div class ="panel-body text-center">
+                <img align = "center" src="img/logos/buggy ass bastard.png" width="100px" height="100px"><div>'
+                .'</br><h2>'.
+                $coinName
+                .'</h2>'.$coinTag.'</br>'
+                .number_format($coinPrice*$price,2,'.',' ').
+                " USD</br>".$coinPrice.
+                " BTC </br> Volume : ".
+                number_format($coin["Volume"],2,'.',' ').'
+                </div>
+                </div>
+                </div>
+                '; 
+    }
 }
-    
-    
+/* 
 function rowFactory($chosenArray,$alt_coins,$btc_price){
     $numberOfRows = ceil(sizeof($chosenArray)/3);
     $lastIndex = 0;
@@ -197,7 +246,7 @@ function panelFactoryBittrex($int,$array,$price){
                 '; 
     
 }    
-  
+*/
 
 function getCurrencyLong($tag,$array){
                 foreach($array as $key => $val){
