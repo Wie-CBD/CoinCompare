@@ -8,13 +8,14 @@
  
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
+    <script ></script>
     <script
   src="https://code.jquery.com/jquery-3.2.1.js"
   integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
   crossorigin="anonymous"></script>
     <?php
-        
+          
+         
         
             //ask for the JSON files
             ini_set("allow_url_fopen", 1);  
@@ -46,12 +47,8 @@
             <h3>A simple Crypto Currency Value Checker page</h3>
             <p>Data taken from Bittrex.</p>
             <p>BTC = <?php echo $btc_price; ?> USD</p>
-        </div>
-        
-       
-        <div class="container">    
-
-            
+        </div> 
+        <div class="container">     
             <div class ="row ">
             </div> 
             <div class="row">
@@ -109,9 +106,7 @@
                     if($_POST['sortType'] == 'volume'){
                         usort($market, 'sortByVolume');
                     }
-                }
-                
-                           
+                }     
                 rowCreator($market,$currencies, $btc_price);
                 
             ?> 
@@ -138,16 +133,12 @@ function rowCreator($coins, $names, $price){
                 }
                 echo "</div>";
     }
-    
 }
     
-function panelCreator($coin, $names, $price){
-      
-    
+function panelCreator($coin, $names, $price){ 
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
-    $coinPrice = $coin["Last"];
-    
+    $coinPrice = $coin["Last"]; 
     if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
     echo
                 '
@@ -157,7 +148,7 @@ function panelCreator($coin, $names, $price){
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,6,'.',' ').
+                .number_format($coinPrice*$price,4,'.',' ').
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
@@ -174,7 +165,7 @@ function panelCreator($coin, $names, $price){
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,6,'.',' ').
+                .number_format($coinPrice*$price,4,'.',' ').
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
