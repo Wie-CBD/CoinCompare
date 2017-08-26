@@ -14,14 +14,13 @@
   integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
   crossorigin="anonymous"></script>
     <?php
+        
+        
             //ask for the JSON files
             ini_set("allow_url_fopen", 1);  
             //ask for the latest data from whattomine
             $alt_json = file_get_contents('http://whattomine.com/coins.json'); 
-            $alt_coins = json_decode($alt_json,true);   
-            //ask for the latest btc price from bittrex
-            $btc_json = file_get_contents('https://api.independentreserve.com/Public/GetMarketSummary?primaryCurrencyCode=xbt&secondaryCurrencyCode=usd');
-            $btc = json_decode($btc_json,true);  
+            $alt_coins = json_decode($alt_json,true);  
             //get the overall market summary
             $bittrex_market_summary = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getmarketsummaries'),true); 
             //get the currencies
@@ -89,8 +88,6 @@
             <?php 
                 $currencies = $bittrex_currencies["result"];
                 $market = $bittrex_btc_market;
-                
-                
                 function sortByPrice($a, $b) {
                     return ($b["Last"]<$a["Last"])?-1:1;
                 }
@@ -100,7 +97,6 @@
                 function sortByVolume($a, $b){
                     return ($b["BaseVolume"]<$a["BaseVolume"])?-1:1;
                 }
-                
                 //sort it by price by default
                 usort($market, 'sortByVolume'); 
                 if(isset($_POST['sortType'])){ 
@@ -161,7 +157,7 @@ function panelCreator($coin, $names, $price){
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,2,'.',' ').
+                .number_format($coinPrice*$price,6,'.',' ').
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
@@ -178,7 +174,7 @@ function panelCreator($coin, $names, $price){
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,2,'.',' ').
+                .number_format($coinPrice*$price,6,'.',' ').
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
