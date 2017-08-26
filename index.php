@@ -10,17 +10,30 @@
 <script  src="https://code.jquery.com/jquery-3.2.1.js"  integrity="sha256 DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="  crossorigin="anonymous"></script>
     <script type="application/javascript" src="src/js/chosen.jquery.js"></script>
 <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
-<link rel="stylesheet" type="text/css" href="src/css/chosen.css" media="screen" />    
+<link rel="stylesheet" type="text/css" href="src/css/chosen.css" media="screen" />   
+    <link rel="stylesheet" type="text/css" href="src/style.css" media="screen" />  
 <?php
+            
+            $Json_success = false;
+    
             //ask for the JSON files
             ini_set("allow_url_fopen", 1);  
-            //ask for the latest data from whattomine
-            $alt_json = file_get_contents('http://whattomine.com/coins.json'); 
-            $alt_coins = json_decode($alt_json,true);  
+            //Surpress warnings
+            error_reporting(E_ERROR | E_PARSE);
             //get the overall market summary
             $bittrex_market_summary = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getmarketsummaries'),true); 
             //get the currencies
             $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true);  
+            
+            $btc_price;
+            $currencies;
+            $market;
+            
+    
+            if($bittrex_market_summary['success']==true && $bittrex_currencies['success']==true){
+            
+                
+                
             //alright! now let's parse the market summary and ONLY get the BTC market.
             $bittrex_btc_market = array();
              foreach($bittrex_market_summary["result"] as $results){
@@ -32,6 +45,12 @@
             $btc_price = $bittrex_market_summary["result"][252]["Last"]; 
             $currencies = $bittrex_currencies["result"];
             $market = $bittrex_btc_market;
+            $Json_success = true;
+            } 
+            
+            //TODO 
+    
+    
     ?>  
     
     </head>
@@ -43,18 +62,33 @@
             <h1><img class="img-responsive center-block" id="header_img" src="img/logo.png">
             </h1>
             <h3>A simple Crypto Currency Value Checker page</h3>
-            <p>Data taken from Bittrex.</p>
-            <p>BTC = <?php echo $btc_price; ?> USD</p>
+            <p>Data taken from Bittrex.</p> 
+            <?php
+                if($Json_success){
+                    echo '<img src="img/logos/btc.png" align="center" width="100px" height="100px"><br>';
+                    echo '<h2>Bitcoin</h2>';
+                    echo "<h3>".$btc_price." USD</h3>";
+                }
+                
+            
+            ?>
+            
         </div> 
         <div class="container">     
             <div class ="row ">
             </div> 
             <div class="row">
+            <?php    
+                 if($Json_success == true){
+            ?>
             <div class="col-md-3">
                     
                     <div class="panel panel-default">
-                    <div class="panel-heading">Coins</div>
+                    <div class="panel-heading">Control</div>
                     <div class="panel-body">
+                        
+                        
+                        
                          <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>"> 
                         <label>Sort By</label>
                         <select name="sortType">
@@ -165,7 +199,30 @@
             ?> 
                 </div>
             </div>
+            <?php
+                }
+                else{?>
+                <div class="text-center">
+                <h2>Oops!</h2>
+                <p>There seems to be a problem. Please come back later!</p>
+                
+                </div>
+            <?php
+                }
+            ?>
+            
+            
         </div>
+        <footer class="footer">
+            <div class="container text-center" >
+                 
+            </div>
+            <div class="container text-center">
+                <p> Copyright ©2017 BitCompare</p>
+            </div>
+        
+        
+        </footer>
     </body>
     <script>
         $(function(){
