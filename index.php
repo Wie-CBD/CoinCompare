@@ -25,15 +25,13 @@
             //get the currencies
             $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true);  
             
+            //arrays that will be the fundamentals of this website
             $btc_price;
             $currencies;
             $market;
             
     
             if($bittrex_market_summary['success']==true && $bittrex_currencies['success']==true){
-            
-                
-                
             //alright! now let's parse the market summary and ONLY get the BTC market.
             $bittrex_btc_market = array();
              foreach($bittrex_market_summary["result"] as $results){
@@ -58,20 +56,12 @@
     
     
     <body>
-        <div class="jumbotron text-center">
+        <div class="jumbotron text-center" id="header">
             <h1><img class="img-responsive center-block" id="header_img" src="img/logo.png">
             </h1>
             <h3>A simple Crypto Currency Value Checker page</h3>
             <p>Data taken from Bittrex.</p> 
-            <?php
-                if($Json_success){
-                    echo '<img src="img/logos/btc.png" align="center" width="100px" height="100px"><br>';
-                    echo '<h2>Bitcoin</h2>';
-                    echo "<h3>".$btc_price." USD</h3>";
-                }
-                
             
-            ?>
             
         </div> 
         <div class="container">     
@@ -81,7 +71,7 @@
             <?php    
                  if($Json_success == true){
             ?>
-            <div class="col-md-3">
+            <div class="col-md-3"> 
                     
                     <div class="panel panel-default">
                     <div class="panel-heading">Control</div>
@@ -90,7 +80,7 @@
                         
                         
                          <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>"> 
-                        <label>Sort By</label>
+                             <label>Sort By</label><br>
                         <select name="sortType">
                             <option value="lastPrice" <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="lastPrice")){ echo "selected"; }  ?>>Last Price</option>
                             <option value="name"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="name")){ echo "selected"; }  ?>>Coin Name</option> 
@@ -100,12 +90,12 @@
                                           { echo "selected";  }
                                     else if(!isset($_POST['sortType'])){ echo 'selected'; }
                                             
-                                    
+                
                                     
                                     ?>>Volume</option> 
                              </select> 
-                        
-                        <label>Show Only...</label>
+                        <br>
+                        <label>Show Only...</label><br>
                         <select multiple name="coinFilters[]" class="chosen-select"> 
                             <?php
                             foreach($bittrex_market_summary['result'] as $coin){
@@ -119,16 +109,27 @@
                         <input style="margin-top: 5px;" type="submit" name="submit" class="btn btn-primary" role="button">
                          
                         </form> 
-                         
-                        
-                        <button onClick="window.location.reload()" class="btn btn-danger">Reset</button>
-                        
+                          
+                        <button onClick="window.location.href=window.location.href" class="btn btn-danger">Reset</button>
+                       
                         
                     </div>
                   
                     </div>
+                    
+                    <div class="panel panel-default">
+                        <div class="panel-body text-center">
+                            <?php
+                 
+                        echo '<img src="img/logos/btc.png" align="center" width="100px" height="100px"><br>';
+                        echo '<h2>Bitcoin</h2>';
+                        echo "<h3>".$btc_price." USD</h3>";
                 
-                
+            
+                        ?>
+                        
+                        </div>
+                    </div>
             </div>
             <div class="col-md-9">  
             <?php 
@@ -225,10 +226,16 @@
         </footer>
     </body>
     <script>
+    
+    function reloadPage() {
+    location.reload();
+    }
+    </script>
+    
+    <script>
         $(function(){
              $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"}); 
         })
-         
     </script>
     
 <?php  
@@ -246,11 +253,25 @@ function rowCreator($coins, $names, $price){
                 echo "</div>";
     }
 }
-function panelCreator($coin, $names, $price){ 
+function panelCreator($coin, $names, $btc_price){ 
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
-    $coinPrice = $coin["Last"]; 
+    $coinPrice = $coin["Last"];
+    $coinPriceBtc = $coinPrice*$btc_price; 
+    $formatted_price;
+    
+    if($coinPriceBtc > 0){
+        $formatted_number = number_format($coinPriceBtc,2,'.',' ');
+    }
+    else{
+         $formatted_number = number_format($coinPriceBtc,4,'.',' ');
+    }
+
+    
     if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
+    
+        
+    
     echo
                 '
                 <div class = "col-sm-6 col-md-4">
@@ -259,7 +280,7 @@ function panelCreator($coin, $names, $price){
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,4,'.',' ').
+                .$formatted_number.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
