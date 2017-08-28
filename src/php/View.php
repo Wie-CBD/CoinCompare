@@ -5,7 +5,7 @@ function rowCreator($coins, $names, $price){
     $lastIndex = 0;
     for($i=0;$i<=$numberOfRows;$i++){
                 echo '</br><div class="row">';
-                for($j=$lastIndex;$j<3*$i;$j++){
+                for($j=$lastIndex;$j<4*$i;$j++){
                     if($j < sizeof($coins)){
                     panelCreator($coins[$j], $names, $price);
                     $lastIndex = $j+1;
@@ -32,7 +32,7 @@ function panelCreator($coin, $names, $btc_price){
     if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
     echo
                 '
-                <div class = "col-sm-6 col-md-4">
+                <div class = "col-sm-6 col-md-3">
                 <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
                 .'</br><h2>'.
@@ -49,7 +49,7 @@ function panelCreator($coin, $names, $btc_price){
         }
     else{ 
         echo  '
-                <div class = "col-sm-6 col-md-4">
+                <div class = "col-sm-6 col-md-3">
                 <div class ="panel-body text-center coin-panel">
                 <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
                 .'</br><h2>'.
