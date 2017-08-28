@@ -5,4 +5,8 @@
     height: 60px;
     padding-top: 10px;
 } 
- 
+
+.btn{
+    height: 40px;
+    width: 150px;
+}

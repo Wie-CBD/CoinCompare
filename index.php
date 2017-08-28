@@ -39,12 +39,15 @@
                         if(preg_match('/BTC-/',$results["MarketName"])){
                             $bittrex_btc_market[] = $results;
                         }
-            } 
-            $btc_price = $bittrex_market_summary["result"][252]["Last"]; 
+            }  
+                
+            $btc_price = searchMarketLast("USDT-BTC", $bittrex_market_summary['result']);
             $currencies = $bittrex_currencies["result"];
             $market = $bittrex_btc_market;
             $Json_success = true;
             } 
+            
+            
             
             //TODO 
     
@@ -105,9 +108,9 @@
                             }
                             ?>
                         </select> 
-                            
+                        
                         <input style="margin-top: 5px;" type="submit" name="submit" class="btn btn-primary" role="button">
-                         
+                        
                         </form> 
                           
                         <button onClick="window.location.href=window.location.href" class="btn btn-danger">Reset</button>
@@ -275,7 +278,7 @@ function panelCreator($coin, $names, $btc_price){
     echo
                 '
                 <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center" id="'.$coinTag.'">
+                <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
@@ -292,7 +295,7 @@ function panelCreator($coin, $names, $btc_price){
     else{ 
         echo  '
                 <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center">
+                <div class ="panel-body text-center coin-panel">
                 <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
@@ -313,7 +316,17 @@ function getCurrencyLong($tag,$array){
                         return $val["CurrencyLong"];
                     }
                 }
-}    
+}   
+function searchMarketLast($marketName,$array){
+        foreach($array as $key => $val){
+                    if($val["MarketName"] == $marketName){
+                        return $val["Last"];
+                    }
+        }
+}
+
+    
+    
 ?>
 
 
