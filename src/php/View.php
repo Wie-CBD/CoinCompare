@@ -14,6 +14,7 @@ function rowCreator($coins, $names, $price){
                 echo "</div>";
     }
 }
+
 function panelCreator($coin, $names, $btc_price){ 
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
