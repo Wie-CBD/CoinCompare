@@ -14,21 +14,31 @@ function rowCreator($coins, $names, $price){
                 echo "</div>";
     }
 }
-    
-function panelCreator($coin, $names, $price){ 
+function panelCreator($coin, $names, $btc_price){ 
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
-    $coinPrice = $coin["Last"]; 
+    $coinPrice = $coin["Last"];
+    $coinPriceBtc = $coinPrice*$btc_price; 
+    $formatted_price;
+    
+    if($coinPriceBtc > 1){
+        $formatted_price = number_format($coinPriceBtc,2,'.',' ');
+    }
+    else{
+         $formatted_price = number_format($coinPriceBtc,5,'.',' ');
+    }
+
+    
     if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
     echo
                 '
                 <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center" id="'.$coinTag.'">
+                <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,4,'.',' ').
+                .$formatted_price.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'
@@ -40,12 +50,12 @@ function panelCreator($coin, $names, $price){
     else{ 
         echo  '
                 <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center">
+                <div class ="panel-body text-center coin-panel">
                 <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
                 .'</br><h2>'.
                 $coinName
                 .'<h3>'
-                .number_format($coinPrice*$price,4,'.',' ').
+                .$formatted_price.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
                 number_format($coin["Volume"],2,'.',' ').'

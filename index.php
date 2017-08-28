@@ -13,45 +13,7 @@
 <link rel="stylesheet" type="text/css" href="src/css/chosen.css" media="screen" />   
     <link rel="stylesheet" type="text/css" href="src/style.css" media="screen" />  
 <?php
-            
-            $Json_success = false;
-    
-            //ask for the JSON files
-            ini_set("allow_url_fopen", 1);  
-            //Surpress warnings
-            error_reporting(E_ERROR | E_PARSE);
-            //get the overall market summary
-            $bittrex_market_summary = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getmarketsummaries'),true); 
-            //get the currencies
-            $bittrex_currencies = json_decode(file_get_contents('https://bittrex.com/api/v1.1/public/getcurrencies'),true);  
-            
-            //arrays that will be the fundamentals of this website
-            $btc_price;
-            $currencies;
-            $market;
-            
-    
-            if($bittrex_market_summary['success']==true && $bittrex_currencies['success']==true){
-            //alright! now let's parse the market summary and ONLY get the BTC market.
-            $bittrex_btc_market = array();
-             foreach($bittrex_market_summary["result"] as $results){
-                        
-                        if(preg_match('/BTC-/',$results["MarketName"])){
-                            $bittrex_btc_market[] = $results;
-                        }
-            }  
-                
-            $btc_price = searchMarketLast("USDT-BTC", $bittrex_market_summary['result']);
-            $currencies = $bittrex_currencies["result"];
-            $market = $bittrex_btc_market;
-            $Json_success = true;
-            } 
-            
-            
-            
-            //TODO 
-    
-    
+            include("src/php/controller.php");
     ?>  
     
     </head>
@@ -60,7 +22,7 @@
     
     <body>
         <div class="jumbotron text-center" id="header">
-            <h1><img class="img-responsive center-block" id="header_img" src="img/logo.png">
+            <h1><img onclick="window.location.href=window.location.href" class="img-responsive center-block" id="header_img" src="img/logo.png">
             </h1>
             <h3>A simple Crypto Currency Value Checker page</h3>
             <p>Data taken from Bittrex.</p> 
@@ -84,7 +46,7 @@
                         
                          <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>"> 
                              <label>Sort By</label><br>
-                        <select name="sortType">
+                        <select name="sortType" class="chosen-select">
                             <option value="lastPrice" <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="lastPrice")){ echo "selected"; }  ?>>Last Price</option>
                             <option value="name"  <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="name")){ echo "selected"; }  ?>>Coin Name</option> 
                             <option value="volume" 
@@ -92,10 +54,7 @@
                                     <?php if(isset($_POST['sortType'])&&($_POST['sortType']=="volume"))
                                           { echo "selected";  }
                                     else if(!isset($_POST['sortType'])){ echo 'selected'; }
-                                            
-                
-                                    
-                                    ?>>Volume</option> 
+                                     ?>>Volume</option> 
                              </select> 
                         <br>
                         <label>Show Only...</label><br>
@@ -202,7 +161,7 @@
                 
             ?> 
                 </div>
-            </div>
+            
             <?php
                 }
                 else{?>
@@ -215,7 +174,7 @@
                 }
             ?>
             
-            
+            </div>
         </div>
         <footer class="footer">
             <div class="container text-center" >
@@ -227,108 +186,12 @@
         
         
         </footer>
-    </body>
-    <script>
-    
-    function reloadPage() {
-    location.reload();
-    }
-    </script>
+    </body> 
     
     <script>
+        //Chosen-select
         $(function(){
              $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"}); 
         })
-    </script>
-    
-<?php  
-function rowCreator($coins, $names, $price){
-    $numberOfRows = ceil(sizeof($coins)/3);
-    $lastIndex = 0;
-    for($i=0;$i<=$numberOfRows;$i++){
-                echo '</br><div class="row">';
-                for($j=$lastIndex;$j<3*$i;$j++){
-                    if($j < sizeof($coins)){
-                    panelCreator($coins[$j], $names, $price);
-                    $lastIndex = $j+1;
-                    }
-                }
-                echo "</div>";
-    }
-}
-function panelCreator($coin, $names, $btc_price){ 
-    $coinTag = str_replace("BTC-","",$coin["MarketName"]);
-    $coinName = getCurrencyLong($coinTag, $names);
-    $coinPrice = $coin["Last"];
-    $coinPriceBtc = $coinPrice*$btc_price; 
-    $formatted_price;
-    
-    if($coinPriceBtc > 0){
-        $formatted_number = number_format($coinPriceBtc,2,'.',' ');
-    }
-    else{
-         $formatted_number = number_format($coinPriceBtc,4,'.',' ');
-    }
-
-    
-    if($coinTag != "ADX"){ //strangely, ADX is NOT compatible with this creator. I had to hard code it.
-    
-        
-    
-    echo
-                '
-                <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
-                <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
-                .'</br><h2>'.
-                $coinName
-                .'<h3>'
-                .$formatted_number.
-                " USD</h3> </br>".$coinPrice.
-                " BTC </br> Volume : ".
-                number_format($coin["Volume"],2,'.',' ').'
-                </div>
-                </div>
-                </div>
-                '; 
-        }
-    else{ 
-        echo  '
-                <div class = "col-sm-6 col-md-4">
-                <div class ="panel-body text-center coin-panel">
-                <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
-                .'</br><h2>'.
-                $coinName
-                .'<h3>'
-                .number_format($coinPrice*$price,4,'.',' ').
-                " USD</h3> </br>".$coinPrice.
-                " BTC </br> Volume : ".
-                number_format($coin["Volume"],2,'.',' ').'
-                </div>
-                </div>
-                </div>
-                '; 
-    }
-} 
-function getCurrencyLong($tag,$array){
-                foreach($array as $key => $val){
-                    if($val["Currency"] == $tag){
-                        return $val["CurrencyLong"];
-                    }
-                }
-}   
-function searchMarketLast($marketName,$array){
-        foreach($array as $key => $val){
-                    if($val["MarketName"] == $marketName){
-                        return $val["Last"];
-                    }
-        }
-}
-
-    
-    
-?>
-
-
-
+    </script> 
 </html>
