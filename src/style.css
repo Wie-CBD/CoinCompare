@@ -10,3 +10,10 @@
     height: 40px;
     width: 125px;
 } 
+.coin-name{
+    display: block;
+    float:inherit;
+    overflow: hidden;
+    word-wrap: break-word;
+    
+} 

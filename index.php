@@ -38,12 +38,9 @@
             ?>
             <div class="col-md-3"> 
                     
-                    <div class="panel panel-default">
+                    <div class="panel panel-default control" >
                     <div class="panel-heading">Control</div>
                     <div class="panel-body">
-                        
-                        
-                        
                          <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>"> 
                              <label>Sort By</label><br>
                         <select name="sortType" class="chosen-select">

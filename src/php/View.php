@@ -36,9 +36,9 @@ function panelCreator($coin, $names, $btc_price){
                 <div class = "col-sm-6 col-md-3">
                 <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
-                .'</br><h2>'.
+                .'</br><h3 class="coin-name">'.
                 $coinName
-                .'<h3>'
+                .'</h3><h3>'
                 .$formatted_price.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
