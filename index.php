@@ -2,7 +2,7 @@
     
     
 <head>
-<title>BitCompare</title>
+<title>BittCompare</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <!-- Latest compiled and minified JavaScript -->
@@ -24,7 +24,7 @@
         <div class="jumbotron text-center" id="header">
             <h1><img onclick="window.location.href=window.location.href" class="img-responsive center-block" id="header_img" src="img/logo.png">
             </h1>
-            <h3>A simple Crypto Currency Value Checker page</h3>
+            <h3>A simple Crypto Currency Value Checker Site</h3>
             <p>Data taken from Bittrex.</p> 
             
             
@@ -37,13 +37,9 @@
                  if($Json_success == true){
             ?>
             <div class="col-md-3"> 
-                    
                     <div class="panel panel-default">
                     <div class="panel-heading">Control</div>
                     <div class="panel-body">
-                        
-                        
-                        
                          <form method="post" name ="sorter" action="<?php echo $_SERVER['PHP_SELF'];?>"> 
                              <label>Sort By</label><br>
                         <select name="sortType" class="chosen-select">
@@ -67,11 +63,8 @@
                             }
                             ?>
                         </select> 
-                        
                         <input style="margin-top: 5px;" type="submit" name="submit" class="btn btn-primary" role="button">
-                        
                         </form> 
-                          
                         <button onClick="window.location.href=window.location.href" class="btn btn-danger">Reset</button>
                        
                         
@@ -82,12 +75,9 @@
                     <div class="panel panel-default">
                         <div class="panel-body text-center">
                             <?php
-                 
                         echo '<img src="img/logos/btc.png" align="center" width="100px" height="100px"><br>';
                         echo '<h2>Bitcoin</h2>';
-                        echo "<h3>".$btc_price." USD</h3>";
-                
-            
+                        echo "<h3>".number_format($btc_price,2,'.','')." USD</h3>";
                         ?>
                         
                         </div>
@@ -95,7 +85,6 @@
             </div>
             <div class="col-md-9">  
             <?php 
-                
                 function sortByPrice($a, $b) {
                     return ($b["Last"]<$a["Last"])?-1:1;
                 }
@@ -160,8 +149,7 @@
                 }
                 
             ?> 
-                </div>
-            
+                </div>    
             <?php
                 }
                 else{?>
@@ -173,21 +161,16 @@
             <?php
                 }
             ?>
-            
             </div>
         </div>
         <footer class="footer">
-            <div class="container text-center" >
-                 
+            <div class="container text-center" >  
             </div>
             <div class="container text-center">
                 <p> Copyright ©2017 BitCompare</p>
             </div>
-        
-        
         </footer>
     </body> 
-    
     <script>
         //Chosen-select
         $(function(){

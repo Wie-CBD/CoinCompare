@@ -1,5 +1,4 @@
 <?php
-
 function rowCreator($coins, $names, $price){
     $numberOfRows = ceil(sizeof($coins)/3);
     $lastIndex = 0;
@@ -13,19 +12,28 @@ function rowCreator($coins, $names, $price){
                 }
                 echo "</div>";
     }
-}
-function panelCreator($coin, $names, $btc_price){ 
+} 
+
+function panelCreator($coin, $names, $price){ 
     $coinTag = str_replace("BTC-","",$coin["MarketName"]);
     $coinName = getCurrencyLong($coinTag, $names);
+
+    if($coinName == "NewEconomyMovement"){
+        $coinName = "New Economy Movement";
+    }
+    if($coinName == "GlobalCurrencyReserve"){
+        $coinName = "Global Currency Reserve";
+    }
+    
     $coinPrice = $coin["Last"];
-    $coinPriceBtc = $coinPrice*$btc_price; 
+    $coinPriceBtc = $coinPrice*$price; 
     $formatted_price;
     
     if($coinPriceBtc > 1){
-        $formatted_price = number_format($coinPriceBtc,2,'.',' ');
+        $formatted_price = number_format($coinPriceBtc,2,'.','');
     }
     else{
-         $formatted_price = number_format($coinPriceBtc,5,'.',' ');
+         $formatted_price = number_format($coinPriceBtc,5,'.','');
     }
 
     
@@ -35,13 +43,13 @@ function panelCreator($coin, $names, $btc_price){
                 <div class = "col-sm-6 col-md-3">
                 <div class ="panel-body text-center coin-panel" id="'.$coinTag.'">
                 <img align = "center" src="img/logos/'.strtolower($coinTag).'.png" id="'.$coinTag.'_img" width="100px" height="100px"><div>'
-                .'</br><h2>'.
+                .'</br><h3>'.
                 $coinName
-                .'<h3>'
+                .'</h3><h3>'
                 .$formatted_price.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
-                number_format($coin["Volume"],2,'.',' ').'
+                number_format($coin["Volume"],2,'.','').'
                 </div>
                 </div>
                 </div>
@@ -52,13 +60,13 @@ function panelCreator($coin, $names, $btc_price){
                 <div class = "col-sm-6 col-md-3">
                 <div class ="panel-body text-center coin-panel">
                 <img align = "center" src="img/logos/buggy coin.png" width="100px" height="100px"><div>'
-                .'</br><h2>'.
+                .'</br><h3>'.
                 $coinName
-                .'<h3>'
+                .'</h4><h3>'
                 .$formatted_price.
                 " USD</h3> </br>".$coinPrice.
                 " BTC </br> Volume : ".
-                number_format($coin["Volume"],2,'.',' ').'
+                number_format($coin["Volume"],2,'.','').'
                 </div>
                 </div>
                 </div>
