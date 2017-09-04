@@ -12,7 +12,7 @@
         return $currencies;
     }
 
-     
+    
 
     function getBtcMarket($market){ 
         $btcMarket = array(); 
@@ -23,6 +23,36 @@
             } 
         return $btcMarket;
     }
+
+     function getEthMarket($market){ 
+        $ethMarket = array(); 
+        foreach($market["result"] as $results){ 
+                        if(preg_match('/ETC-/',$results["MarketName"])){ 
+                            $btcMarket[] = $results;
+                        }
+            } 
+        return $ethMarket;
+    }
+
+    function getMarket($market, $marketType){
+        $market;
+        if($marketType == "btc"){
+            foreach($market["result"] as $results){ 
+                        if(preg_match('/BTC-/',$results["MarketName"])){ 
+                            $market[] = $results;
+                        }
+            } 
+        }
+        else if ($marketType == "eth"){
+             foreach($market["result"] as $results){ 
+                        if(preg_match('/ETC-/',$results["MarketName"])){ 
+                            $market[] = $results;
+                        }
+            } 
+        }
+        return $market;
+    }
+    
 
     function searchMarketLast($marketName, $market){ 
         foreach($market as $key => $val){

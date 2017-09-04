@@ -2,24 +2,25 @@
     
     
 <head>
+  <meta charset="UTF-8">
+  <meta name=“robots” content=“index,follow”>
+  <meta name="description" content="Simple Cryptocurrency Value Checker">
+  <meta name="keywords" content="Bitcoin, Ethereum, ETH, BTC, Check, price, Currency, Cryptocurrency, crypto, LiteCoin, Monero, XMR, LTC, Bittrex, Trading, Compare, Converter, Checker, Last, Latest, Price">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BittCompare</title>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script  src="https://code.jquery.com/jquery-3.2.1.js"  integrity="sha256 DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="  crossorigin="anonymous"></script>
-    <script type="application/javascript" src="src/js/chosen.jquery.js"></script>
+<script type="application/javascript" src="src/js/chosen.jquery.js"></script>
 <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
 <link rel="stylesheet" type="text/css" href="src/css/chosen.css" media="screen" />   
-    <link rel="stylesheet" type="text/css" href="src/style.css" media="screen" />  
+<link rel="stylesheet" type="text/css" href="src/css/style.css" media="screen" />  
 <?php
             include("src/php/controller.php");
     ?>  
-    
     </head>
-    
-    
-    
     <body>
         <div class="jumbotron text-center" id="header">
             <h1><img onclick="window.location.href=window.location.href" class="img-responsive center-block" id="header_img" src="img/logo.png">
@@ -30,12 +31,12 @@
             
         </div> 
         <div class="container">     
-            <div class ="row ">
+            <div class ="row">
             </div> 
             <div class="row">
             <?php    
-                 if($Json_success == true){
-            ?>
+            if($Json_success == true){
+            ?> 
             <div class="col-md-3"> 
                     <div class="panel panel-default">
                     <div class="panel-heading">Control</div>
@@ -71,7 +72,6 @@
                     </div>
                   
                     </div>
-                    
                     <div class="panel panel-default">
                         <div class="panel-body text-center">
                             <?php
@@ -150,13 +150,13 @@
                 
             ?> 
                 </div>    
+            
             <?php
                 }
                 else{?>
                 <div class="text-center">
                 <h2>Oops!</h2>
                 <p>There seems to be a problem. Please come back later!</p>
-                
                 </div>
             <?php
                 }

@@ -11,12 +11,15 @@
             $Json_success = false;
             //arrays that will be the fundamentals of this website
             $btc_price;
+            $eth_price;
+
             $currencies;
             $market;
             if($bittrex_market_summary['success']==true && $bittrex_currencies['success']==true){
             //alright! now let's parse the market summary and ONLY get the BTC market.
             $bittrex_btc_market = getBtcMarket($bittrex_market_summary);
             $btc_price = searchMarketLast("USDT-BTC",$bittrex_market_summary["result"]);
+            $eth_price = searchMarketLast("USDT-ETH",$bittrex_market_summary["result"]);
             $currencies = $bittrex_currencies["result"];
             $market = $bittrex_btc_market;
             $Json_success = true;
